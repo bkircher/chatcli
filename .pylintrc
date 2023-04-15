@@ -1,0 +1,10 @@
+[MESSAGES CONTROL]
+enable=all
+disable=missing-docstring,
+        invalid-name,
+        too-few-public-methods,
+        no-member,
+        import-outside-toplevel,
+        suppressed-message,
+        locally-disabled
+max-line-length=80
