@@ -3,12 +3,27 @@ from typing import Callable
 
 import openai
 from prompt_toolkit import PromptSession
+from prompt_toolkit.output import ColorDepth
+from prompt_toolkit.styles import Style
 
 
 def repl(session: PromptSession, eval_fn: Callable[[str], str]) -> None:
+    style = Style.from_dict(
+        {
+            "": "#ffffff",
+            "pound": "#884444",
+        }
+    )
+    message = [
+        ("class:pound", ">>> "),
+    ]
     while True:
         try:
-            text = session.prompt(">>> ")
+            text = session.prompt(
+                message=message,
+                style=style,
+                color_depth=ColorDepth.TRUE_COLOR,
+            )
         except (EOFError, KeyboardInterrupt):
             return
         if text:
