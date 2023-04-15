@@ -1,5 +1,6 @@
 black==23.3.0
 openai==0.27.4
+prompt-toolkit==3.0.38
 pylint==2.17.2
 rope==1.7.0
 ruff==0.0.261
