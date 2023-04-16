@@ -1,3 +1,4 @@
+alembic==1.10.3
 appdirs==1.4.4
 black==23.3.0
 openai==0.27.4
@@ -5,3 +6,4 @@ prompt-toolkit==3.0.38
 pylint==2.17.2
 rope==1.7.0
 ruff==0.0.261
+SQLAlchemy==2.0.9
