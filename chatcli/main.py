@@ -24,6 +24,7 @@ def repl(
         except (EOFError, KeyboardInterrupt):
             return
         if text:
+            # TODO: does text here need some sanitization, trimming maybe?
             output = evalfn(text)
             print(output)
         else:

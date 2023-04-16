@@ -24,6 +24,7 @@ class ChatHistory(History):
             yield from (row[0] for row in rows)
 
     def store_string(self, string: str) -> None:
+        # TODO: maybe trim superfluous whitespace before inserting?
         with self.db.connect() as conn:
             conn.execute(
                 text(
@@ -59,6 +60,7 @@ class ChatState:
     @property
     def current_conversation(self) -> int:
         """The current conversation ID."""
+
         return self._current_conversation_id
 
     def close(self) -> None:

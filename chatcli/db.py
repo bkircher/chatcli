@@ -26,6 +26,7 @@ def _run_migration(database_url: str) -> None:
 def init(config: Config) -> Engine:
     """Run migrations and initialize the database engine."""
 
+    # TODO: maybe it's not so good to run migrations on every startup; slooow…
     try:
         _run_migration(config.database_url)
     except OperationalError as exc:
