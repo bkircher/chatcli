@@ -1,4 +1,4 @@
-# chatcli
+# ChatCLI
 
 Quick and dirty OpenAI chat interface for the CLI.
 
@@ -20,7 +20,7 @@ Quick and dirty OpenAI chat interface for the CLI.
 3. Run the script
 
     ```raw
-    (.venv) openai/chatcli % python -m chatcli.chat
+    (.venv) openai/chatcli % python -m chatcli.main
     >>> Please write a simple for-loop in Common Lisp
     Here is an example of a simple for-loop in Common Lisp:
 
