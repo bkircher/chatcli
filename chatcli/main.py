@@ -1,24 +1,12 @@
 import os
-import errno
-from pathlib import Path
-from typing import Callable, Union
+from typing import Callable
 
 import openai
-from appdirs import user_config_dir
 from prompt_toolkit import PromptSession
 from prompt_toolkit.output import ColorDepth
 
 from .state import ChatState
-
-
-def create_dir(directory: Union[str, Path]) -> None:
-    """Create a directory if it doesn't exist."""
-
-    try:
-        os.makedirs(directory)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
+from .config import Config
 
 
 def repl(
@@ -52,6 +40,8 @@ def chat(text: str) -> str:
     )
     return response.choices[0].message.content
 
+    # TODO: add a dry run mode, like: return "I am so clever, yada yada"
+
 
 def main() -> None:
     """Main entry point."""
@@ -60,11 +50,8 @@ def main() -> None:
     if not openai.api_key:
         raise RuntimeError("OPENAI_API_KEY env var is not set or empty")
 
-    appname = "ChatCLI"
-    configdir = user_config_dir(appname=appname)
-    create_dir(configdir)
-
-    with ChatState(filename=os.path.join(configdir, "chat.db")) as state:
+    config = Config()
+    with ChatState(config=config) as state:
         session = PromptSession(history=state.history)
         repl(session=session, evalfn=chat, context=state)
 
