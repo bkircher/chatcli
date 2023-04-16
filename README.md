@@ -71,3 +71,7 @@ What about choices here in the response?
 
 - [OpenAI API docs](https://beta.openai.com/docs/api-reference/introduction)
 - [OpenAI Cookbook](https://github.com/openai/openai-cookbook)
+- [Prompt Toolkit docs](https://python-prompt-toolkit.readthedocs.io/en/stable/pages/asking_for_input.html)
+- [SQLite docs](https://www.sqlite.org/docs.html)
+- [SQLAlchemy docs](https://docs.sqlalchemy.org/en/20/dialects/sqlite.html)
+- [Alembic migration docs](https://alembic.sqlalchemy.org/en/latest/tutorial.html)
