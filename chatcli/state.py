@@ -75,7 +75,7 @@ class ChatState:
         ]
         self.db = init(config)
         self.history = ChatHistory(db=self.db, state=self)
-        self._current_conversation_id = _create_new_conversation(self.db)
+        self._current_conversation_id = self._create_new_conversation()
 
     @property
     def current_conversation(self) -> int:
@@ -125,27 +125,26 @@ class ChatState:
     def __exit__(self, exc_type, exc_value, traceback) -> None:
         self.close()
 
+    def _create_new_conversation(self) -> int:
+        """Create a new conversation and return its ID."""
 
-def _create_new_conversation(db: Engine) -> int:
-    """Create a new conversation and return its ID."""
-
-    with db.connect() as conn:
-        conn.execute(text(r"insert into conversation default values"))
-        conversation_id = conn.execute(
-            text(r"select last_insert_rowid()")
-        ).scalar()
-        # Add a default system message to the conversation
-        conn.execute(
-            text(
-                r"""insert into message (role, content, conversation_id)
-                values (:role, :content, :conversation_id)"""
+        with self.db.connect() as conn:
+            conn.execute(text(r"insert into conversation default values"))
+            conversation_id = conn.execute(
+                text(r"select last_insert_rowid()")
+            ).scalar()
+            # Add a default system message to the conversation
+            conn.execute(
+                text(
+                    r"""insert into message (role, content, conversation_id)
+                    values (:role, :content, :conversation_id)"""
+                )
+                .bindparams(
+                    role="system",
+                    content="You are a helpful assistant.",
+                    conversation_id=conversation_id,
+                )
+                .columns(role=String, content=String, conversation_id=Integer)
             )
-            .bindparams(
-                role="system",
-                content="You are a helpful assistant.",
-                conversation_id=conversation_id,
-            )
-            .columns(role=String, content=String, conversation_id=Integer)
-        )
-        conn.commit()
-        return conversation_id
+            conn.commit()
+            return conversation_id
