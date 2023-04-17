@@ -12,7 +12,7 @@ from .config import Config
 def repl(
     session: PromptSession, evalfn: Callable[[str], str], context: ChatState
 ) -> None:
-    """The REPL loop."""
+    """The REPL loop loop loop."""
 
     while True:
         try:

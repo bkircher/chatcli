@@ -24,7 +24,7 @@ class ChatHistory(History):
             yield from (row[0] for row in rows)
 
     def store_string(self, string: str) -> None:
-        # TODO: maybe trim superfluous whitespace before inserting?
+        string = string.strip()
         with self.db.connect() as conn:
             conn.execute(
                 text(
