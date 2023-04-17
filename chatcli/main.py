@@ -25,21 +25,24 @@ def repl(
             return
         if text:
             # TODO: does text here need some sanitization, trimming maybe?
-            output = evalfn(text)
+            output = evalfn(text, context)
             print(output)
         else:
             # Wait for more input
             continue
 
 
-def chat(text: str) -> str:
+def chat(text: str, context: ChatState) -> str:
     """Send message to OpenAI API and return response."""
 
+    context.append_message(role="user", content=text)
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": text}],
+        messages=[msg.to_json() for msg in context.messages],
     )
-    return response.choices[0].message.content
+    content = response.choices[0].message.content
+    context.append_message(role="assistant", content=content)
+    return content
 
     # TODO: add a dry run mode, like: return "I am so clever, yada yada"
 

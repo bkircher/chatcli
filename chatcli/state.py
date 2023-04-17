@@ -40,6 +40,25 @@ class ChatHistory(History):
             conn.commit()
 
 
+class Message:
+    """A message in the chat session."""
+
+    def __init__(self, role: str, content: str) -> None:
+        self.role = role
+        self.content = content
+
+    def __repr__(self) -> str:
+        return f"Message(role={self.role}, content={self.content})"
+
+    def to_json(self) -> dict:
+        """Return a JSON representation of the message."""
+
+        return {
+            "role": self.role,
+            "content": self.content,
+        }
+
+
 class ChatState:
     """The state of the chat session."""
 
@@ -63,6 +82,39 @@ class ChatState:
 
         return self._current_conversation_id
 
+    @property
+    def messages(self) -> Iterable[Message]:
+        """The messages in the current conversation."""
+        with self.db.connect() as conn:
+            rows = conn.execute(
+                text(
+                    r"""select role, content from message
+                    where conversation_id = :conversation_id
+                    order by id asc"""
+                )
+                .bindparams(conversation_id=self.current_conversation)
+                .columns(conversation_id=Integer)
+            )
+            yield from (Message(role=row[0], content=row[1]) for row in rows)
+
+    def append_message(self, role: str, content: str) -> None:
+        """Add a new message to the current conversation."""
+
+        with self.db.connect() as conn:
+            conn.execute(
+                text(
+                    r"""insert into message (role, content, conversation_id)
+                    values (:role, :content, :conversation_id)"""
+                )
+                .bindparams(
+                    role=role,
+                    content=content,
+                    conversation_id=self.current_conversation,
+                )
+                .columns(role=String, content=String, conversation_id=Integer)
+            )
+            conn.commit()
+
     def close(self) -> None:
         pass
 
@@ -78,6 +130,21 @@ def _create_new_conversation(db: Engine) -> int:
 
     with db.connect() as conn:
         conn.execute(text(r"insert into conversation default values"))
-        rowid = conn.execute(text(r"select last_insert_rowid()")).scalar()
+        conversation_id = conn.execute(
+            text(r"select last_insert_rowid()")
+        ).scalar()
+        # Add a default system message to the conversation
+        conn.execute(
+            text(
+                r"""insert into message (role, content, conversation_id)
+                values (:role, :content, :conversation_id)"""
+            )
+            .bindparams(
+                role="system",
+                content="You are a helpful assistant.",
+                conversation_id=conversation_id,
+            )
+            .columns(role=String, content=String, conversation_id=Integer)
+        )
         conn.commit()
-        return rowid
+        return conversation_id
