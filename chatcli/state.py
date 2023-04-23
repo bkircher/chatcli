@@ -19,7 +19,7 @@ class ChatHistory(History):
     def load_history_strings(self) -> Iterable[str]:
         with self.db.connect() as conn:
             rows = conn.execute(
-                text(r"select value from history order by id asc")
+                text(r"select value from history order by id desc")
             )
             yield from (row[0] for row in rows)
 
