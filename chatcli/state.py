@@ -50,6 +50,7 @@ class Message:
     def __repr__(self) -> str:
         return f"Message(role={self.role}, content={self.content})"
 
+    # TODO: should be to_dict, right?
     def to_json(self) -> dict:
         """Return a JSON representation of the message."""
 
