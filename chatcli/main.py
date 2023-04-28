@@ -21,6 +21,7 @@ def repl(
                 style=context.style,
                 color_depth=ColorDepth.TRUE_COLOR,
             )
+            text = text.strip()
         except (EOFError, KeyboardInterrupt):
             return
         if text:
