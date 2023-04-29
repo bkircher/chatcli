@@ -39,7 +39,7 @@ def chat(text: str, context: ChatState) -> str:
     context.append_message(role="user", content=text)
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
-        messages=[msg.to_json() for msg in context.messages],
+        messages=[msg.to_dict() for msg in context.messages],
     )
     content = response.choices[0].message.content
     context.append_message(role="assistant", content=content)
