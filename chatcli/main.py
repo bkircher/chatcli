@@ -1,12 +1,16 @@
 import os
 from typing import Callable
 
+import click
 import openai
 from prompt_toolkit import PromptSession
 from prompt_toolkit.output import ColorDepth
 
 from .state import ChatState
 from .config import Config
+
+
+version = "0.1.0"
 
 
 def repl(
@@ -39,23 +43,34 @@ def chat(text: str, context: ChatState) -> str:
     """Send message to OpenAI API and return response."""
 
     context.append_message(role="user", content=text)
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[msg.to_dict() for msg in context.messages],
-    )
-    content = response.choices[0].message.content
+    if context.config.dry_run:
+        content = (
+            "I am running in dry-run mode, no messages sent to OpenAI API."
+        )
+    else:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[msg.to_dict() for msg in context.messages],
+        )
+        content = response.choices[0].message.content
     context.append_message(role="assistant", content=content)
     return content
 
-    # TODO: add a dry run mode, like: return "I am so clever, yada yada"
 
+@click.command()
+@click.option(
+    "--dry-run", is_flag=True, help="Don't send messages to OpenAI API"
+)
+@click.version_option(
+    version=version, package_name="chatcli", prog_name="ChatCLI"
+)
+def main(dry_run) -> None:
+    """Quick and dirty OpenAI chat interface for the CLI."""
 
-def main() -> None:
-    """Main entry point."""
-
-    openai.api_key = os.getenv("OPENAI_API_KEY")
-    if not openai.api_key:
-        raise RuntimeError("OPENAI_API_KEY env var is not set or empty")
+    if not dry_run:
+        openai.api_key = os.getenv("OPENAI_API_KEY")
+        if not openai.api_key:
+            raise RuntimeError("OPENAI_API_KEY env var is not set or empty")
 
     config = Config()
     with ChatState(config=config) as state:
@@ -64,4 +79,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    # pylint: disable=no-value-for-parameter
     main()

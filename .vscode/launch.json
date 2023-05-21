@@ -10,7 +10,8 @@
             "request": "launch",
             "module": "chatcli.main",
             "console": "integratedTerminal",
-            "justMyCode": false
+            "justMyCode": false,
+            "args": ["--dry-run"]
         }
     ]
 }

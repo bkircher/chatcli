@@ -3,6 +3,7 @@ import errno
 from pathlib import Path
 from typing import Union
 
+import click
 from appdirs import user_config_dir
 
 
@@ -21,6 +22,12 @@ class Config:
 
     def __init__(self) -> None:
         self.app_name = "ChatCLI"
+
+        # Set command-line options as attributes to have them accessible
+        # wherever we pass the Config object
+        click_ctx = click.get_current_context()
+        for key, value in click_ctx.params.items():
+            setattr(self, key, value)
 
         app_dir = user_config_dir(appname=self.app_name)
         create_dir(app_dir)

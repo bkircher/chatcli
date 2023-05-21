@@ -73,6 +73,7 @@ class ChatState:
         self.message: Sequence[Tuple[str, str]] = [
             ("class:pound", ">>> "),
         ]
+        self.config = config
         self.db = init(config)
         self.history = ChatHistory(db=self.db, state=self)
         self._current_conversation_id = self._create_new_conversation()
