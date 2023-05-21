@@ -48,9 +48,10 @@ def chat(text: str, context: ChatState) -> str:
             "I am running in dry-run mode, no messages sent to OpenAI API."
         )
     else:
+        messages = [msg.to_dict() for msg in context.messages]
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
-            messages=[msg.to_dict() for msg in context.messages],
+            messages=messages,
         )
         content = response.choices[0].message.content
     context.append_message(role="assistant", content=content)
@@ -59,12 +60,18 @@ def chat(text: str, context: ChatState) -> str:
 
 @click.command()
 @click.option(
-    "--dry-run", is_flag=True, help="Don't send messages to OpenAI API"
+    "-p",
+    "--prompt",
+    default=None,
+    help="A text-file which is set at the beginning of the conversation.",
+)
+@click.option(
+    "--dry-run", is_flag=True, help="Don't send messages to OpenAI API."
 )
 @click.version_option(
     version=version, package_name="chatcli", prog_name="ChatCLI"
 )
-def main(dry_run) -> None:
+def main(prompt, dry_run) -> None:
     """Quick and dirty OpenAI chat interface for the CLI."""
 
     if not dry_run:
@@ -73,7 +80,7 @@ def main(dry_run) -> None:
             raise RuntimeError("OPENAI_API_KEY env var is not set or empty")
 
     config = Config()
-    with ChatState(config=config) as state:
+    with ChatState(config=config, prompt_filename=prompt) as state:
         session = PromptSession(history=state.history)
         repl(session=session, evalfn=chat, context=state)
 

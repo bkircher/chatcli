@@ -35,6 +35,7 @@ class Config:
 
         database_file = os.path.join(app_dir, "chat.db")
         assert os.path.isabs(database_file)
+
         # See Engine Configuration in docs:
         # https://docs.sqlalchemy.org/en/20/core/engines.html#sqlite
         self.database_url = f"sqlite:///{database_file}"

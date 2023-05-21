@@ -11,7 +11,7 @@
             "module": "chatcli.main",
             "console": "integratedTerminal",
             "justMyCode": false,
-            "args": ["--dry-run"]
+            "args": ["--prompt", "prompts/copilot.txt"]
         }
     ]
 }

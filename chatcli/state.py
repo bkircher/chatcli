@@ -1,5 +1,7 @@
-from typing import Iterable, Optional, Type, Sequence, Tuple
+from typing import Iterable, Optional, Type, Sequence, Tuple, Union
 from types import TracebackType
+from os import PathLike
+from pathlib import Path
 
 from sqlalchemy import Engine, text, Integer, String
 from prompt_toolkit.styles import Style
@@ -60,10 +62,34 @@ class Message:
         }
 
 
+class Prompt:
+    """A prompt for the chat session."""
+
+    def __init__(self, name: str, messages: Sequence[str]) -> None:
+        self.name = name
+        self.messages = messages
+
+    def __repr__(self) -> str:
+        return f"Prompt(name='{self.name}')"
+
+    @staticmethod
+    def from_file(filename: PathLike) -> "Prompt":
+        """Load a prompt from a file."""
+
+        initial_messages = []
+        with open(filename, "r", encoding="utf-8") as f:
+            for line in f.readlines():
+                initial_messages.append(line.strip())
+
+        return Prompt(name=Path(filename).stem, messages=initial_messages)
+
+
 class ChatState:
     """The state of the chat session."""
 
-    def __init__(self, config: Config) -> None:
+    def __init__(
+        self, config: Config, prompt_filename: Union[str, PathLike]
+    ) -> None:
         self.style = Style.from_dict(
             {
                 "": "#ffffff",
@@ -74,9 +100,15 @@ class ChatState:
             ("class:pound", ">>> "),
         ]
         self.config = config
+        self.prompt: Optional[Prompt] = None
+        if prompt_filename:
+            self.prompt = Prompt.from_file(prompt_filename)
+
         self.db = init(config)
         self.history = ChatHistory(db=self.db, state=self)
-        self._current_conversation_id = self._create_new_conversation()
+        self._current_conversation_id = self._create_new_conversation(
+            prompt=self.prompt
+        )
 
     @property
     def current_conversation(self) -> int:
@@ -131,7 +163,7 @@ class ChatState:
     ) -> None:
         self.close()
 
-    def _create_new_conversation(self) -> int:
+    def _create_new_conversation(self, prompt: Optional[Prompt] = None) -> int:
         """Create a new conversation and return its ID."""
 
         with self.db.connect() as conn:
@@ -139,18 +171,39 @@ class ChatState:
             conversation_id: int = conn.execute(
                 text(r"select last_insert_rowid()")
             ).scalar()
+
             # Add a default system message to the conversation
-            conn.execute(
-                text(
-                    r"""insert into message (role, content, conversation_id)
-                    values (:role, :content, :conversation_id)"""
+            if prompt:
+                for message in prompt.messages:
+                    conn.execute(
+                        text(
+                            r"""insert into message
+                            (role, content, conversation_id)
+                            values (:role, :content, :conversation_id)"""
+                        )
+                        .bindparams(
+                            role="system",
+                            content=message,
+                            conversation_id=conversation_id,
+                        )
+                        .columns(
+                            role=String, content=String, conversation_id=Integer
+                        )
+                    )
+            else:
+                conn.execute(
+                    text(
+                        r"""insert into message (role, content, conversation_id)
+                        values (:role, :content, :conversation_id)"""
+                    )
+                    .bindparams(
+                        role="system",
+                        content="You are a helpful assistant.",
+                        conversation_id=conversation_id,
+                    )
+                    .columns(
+                        role=String, content=String, conversation_id=Integer
+                    )
                 )
-                .bindparams(
-                    role="system",
-                    content="You are a helpful assistant.",
-                    conversation_id=conversation_id,
-                )
-                .columns(role=String, content=String, conversation_id=Integer)
-            )
             conn.commit()
             return conversation_id
