@@ -10,7 +10,9 @@ from .config import Config
 
 
 def repl(
-    session: PromptSession, evalfn: Callable[[str], str], context: ChatState
+    session: PromptSession,
+    evalfn: Callable[[str, ChatState], str],
+    context: ChatState,
 ) -> None:
     """The REPL loop loop loop."""
 

@@ -1,4 +1,5 @@
-from typing import Iterable
+from typing import Iterable, Optional, Type, Sequence, Tuple
+from types import TracebackType
 
 from sqlalchemy import Engine, text, Integer, String
 from prompt_toolkit.styles import Style
@@ -69,7 +70,7 @@ class ChatState:
                 "pound": "#884444",
             }
         )
-        self.message = [
+        self.message: Sequence[Tuple[str, str]] = [
             ("class:pound", ">>> "),
         ]
         self.db = init(config)
@@ -121,7 +122,12 @@ class ChatState:
     def __enter__(self) -> "ChatState":
         return self
 
-    def __exit__(self, exc_type, exc_value, traceback) -> None:
+    def __exit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_value: Optional[BaseException],
+        traceback: Optional[TracebackType],
+    ) -> None:
         self.close()
 
     def _create_new_conversation(self) -> int:
@@ -129,7 +135,7 @@ class ChatState:
 
         with self.db.connect() as conn:
             conn.execute(text(r"insert into conversation default values"))
-            conversation_id = conn.execute(
+            conversation_id: int = conn.execute(
                 text(r"select last_insert_rowid()")
             ).scalar()
             # Add a default system message to the conversation
