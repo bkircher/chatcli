@@ -1,1 +1,2 @@
+# Install direnv(1) and run `direnv allow` to automatically load this file.
 export OPENAI_API_KEY=
