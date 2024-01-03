@@ -1,14 +1,15 @@
 {
-    "python.formatting.provider": "black",
-    "python.formatting.blackArgs": [
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    },
+    "black-formatter.args": [
         "--line-length",
         "80",
         "--target-version",
-        "py311"
+        "py312"
     ],
     "editor.rulers": [
         80
     ],
     "editor.formatOnSaveMode": "modifications",
-    "python.linting.pylintEnabled": true,
 }
