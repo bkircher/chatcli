@@ -1,8 +1,9 @@
 import os
-from typing import Callable
+from typing import Callable, Optional
 
 import click
-import openai
+from openai import OpenAI
+
 from prompt_toolkit import PromptSession
 from prompt_toolkit.output import ColorDepth
 
@@ -15,10 +16,18 @@ version = "0.1.0"
 
 def repl(
     session: PromptSession,
-    evalfn: Callable[[str, ChatState], str],
+    evalfn: Callable[[Optional[OpenAI], str, ChatState], str],
     context: ChatState,
 ) -> None:
     """The REPL loop loop loop."""
+
+    client = None
+
+    if not context.config.dry_run:
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            raise RuntimeError("OPENAI_API_KEY env var is not set or empty")
+        client = OpenAI(api_key=api_key)
 
     while True:
         try:
@@ -32,14 +41,14 @@ def repl(
             return
         if text:
             # TODO: does text here need some sanitization, trimming maybe?
-            output = evalfn(text, context)
+            output = evalfn(client, text, context)
             print(output)
         else:
             # Wait for more input
             continue
 
 
-def chat(text: str, context: ChatState) -> str:
+def chat(client: Optional[OpenAI], text: str, context: ChatState) -> str:
     """Send message to OpenAI API and return response."""
 
     context.append_message(role="user", content=text)
@@ -49,9 +58,8 @@ def chat(text: str, context: ChatState) -> str:
         )
     else:
         messages = [msg.to_dict() for msg in context.messages]
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=messages,
+        response = client.chat.completions.create(
+            model="gpt-4", messages=messages
         )
         content = response.choices[0].message.content
     context.append_message(role="assistant", content=content)
@@ -74,12 +82,7 @@ def chat(text: str, context: ChatState) -> str:
 def main(prompt, dry_run) -> None:
     """Quick and dirty OpenAI chat interface for the CLI."""
 
-    if not dry_run:
-        openai.api_key = os.getenv("OPENAI_API_KEY")
-        if not openai.api_key:
-            raise RuntimeError("OPENAI_API_KEY env var is not set or empty")
-
-    config = Config()
+    config = Config(dry_run=dry_run)
     with ChatState(config=config, prompt_filename=prompt) as state:
         session = PromptSession(history=state.history)
         repl(session=session, evalfn=chat, context=state)

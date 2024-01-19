@@ -20,8 +20,9 @@ def create_dir(directory: Union[str, Path]) -> None:
 class Config:
     """Configuration for the app."""
 
-    def __init__(self) -> None:
+    def __init__(self, dry_run: bool = False) -> None:
         self.app_name = "ChatCLI"
+        self.dry_run = dry_run
 
         # Set command-line options as attributes to have them accessible
         # wherever we pass the Config object
