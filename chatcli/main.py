@@ -79,7 +79,7 @@ def chat(client: Optional[OpenAI], text: str, context: ChatState) -> str:
 @click.version_option(
     version=version, package_name="chatcli", prog_name="ChatCLI"
 )
-def main(prompt, dry_run) -> None:
+def main(prompt: os.PathLike, dry_run: bool) -> None:
     """Quick and dirty OpenAI chat interface for the CLI."""
 
     config = Config(dry_run=dry_run)

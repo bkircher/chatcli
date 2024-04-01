@@ -1,4 +1,5 @@
 import logging
+from typing import Any
 
 from sqlalchemy import event, create_engine
 from sqlalchemy.exc import OperationalError
@@ -40,7 +41,7 @@ def init(config: Config) -> Engine:
 
 
 @event.listens_for(Engine, "connect")
-def set_sqlite_pragma(dbapi_connection, _connection_record):
+def set_sqlite_pragma(dbapi_connection: Any, _connection_record: Any) -> None:
     """Ensure foreign key constraints are enforced with SQLite."""
 
     cursor = dbapi_connection.cursor()
