@@ -1,15 +1,15 @@
 {
-    "[python]": {
-        "editor.defaultFormatter": "ms-python.black-formatter"
-    },
-    "black-formatter.args": [
-        "--line-length",
-        "80",
-        "--target-version",
-        "py312"
-    ],
-    "editor.rulers": [
-        80
-    ],
-    "editor.formatOnSaveMode": "modifications",
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "black-formatter.args": [
+    "--line-length",
+    "80",
+    "--target-version",
+    "py312"
+  ],
+  "editor.rulers": [
+    80
+  ],
+  "editor.formatOnSaveMode": "modifications"
 }
