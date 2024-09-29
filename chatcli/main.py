@@ -11,7 +11,7 @@ from .state import ChatState
 from .config import Config
 
 
-version = "0.2.0"
+version = "0.3.0"
 
 
 def repl(
@@ -59,7 +59,7 @@ def chat(client: Optional[OpenAI], text: str, context: ChatState) -> str:
     else:
         messages = [msg.to_dict() for msg in context.messages]
         response = client.chat.completions.create(
-            model="gpt-4", messages=messages
+            model="chatgpt-4o-latest", messages=messages
         )
         content = response.choices[0].message.content
     context.append_message(role="assistant", content=content)
