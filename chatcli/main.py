@@ -66,7 +66,7 @@ def chat(client: Optional[OpenAI], text: str, context: ChatState) -> str:
     return content
 
 
-@click.command()
+@click.command(context_settings=dict(help_option_names=["-h", "--help"]))
 @click.option(
     "-p",
     "--prompt",
