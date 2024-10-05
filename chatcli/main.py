@@ -12,6 +12,7 @@ from .config import Config
 
 
 version = "0.3.0"
+model = "chatgpt-4o-latest"
 
 
 def repl(
@@ -59,7 +60,7 @@ def chat(client: Optional[OpenAI], text: str, context: ChatState) -> str:
     else:
         messages = [msg.to_dict() for msg in context.messages]
         response = client.chat.completions.create(
-            model="chatgpt-4o-latest", messages=messages
+            model=model, messages=messages
         )
         content = response.choices[0].message.content
     context.append_message(role="assistant", content=content)
