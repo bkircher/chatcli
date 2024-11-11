@@ -1,11 +1,11 @@
-alembic==1.13.3
+alembic==1.14.0
 appdirs==1.4.4
 black==24.8.0
 click==8.1.7
 mypy==1.13.0
-openai==1.53.0
+openai==1.54.3
 prompt-toolkit==3.0.48
 pylint==3.3.1
 rope==1.13.0
-ruff==0.7.2
+ruff==0.7.3
 SQLAlchemy==2.0.36
