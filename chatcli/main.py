@@ -12,7 +12,7 @@ from .config import Config
 
 
 version = "0.3.0"
-model = "chatgpt-4o-latest"
+model = "o1-preview"
 
 
 def repl(

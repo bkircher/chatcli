@@ -182,7 +182,7 @@ class ChatState:
                             values (:role, :content, :conversation_id)"""
                         )
                         .bindparams(
-                            role="system",
+                            role="assistant",
                             content=message,
                             conversation_id=conversation_id,
                         )
@@ -197,7 +197,7 @@ class ChatState:
                         values (:role, :content, :conversation_id)"""
                     )
                     .bindparams(
-                        role="system",
+                        role="assistant",
                         content="You are a helpful assistant.",
                         conversation_id=conversation_id,
                     )
