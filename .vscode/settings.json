@@ -6,7 +6,7 @@
     "--line-length",
     "80",
     "--target-version",
-    "py312"
+    "py313"
   ],
   "editor.rulers": [
     80
