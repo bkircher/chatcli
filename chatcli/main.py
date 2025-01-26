@@ -12,7 +12,10 @@ from .config import Config
 
 
 version = "0.3.0"
-model = "o1-preview"
+
+# Set model version here.
+# https://platform.openai.com/docs/models#current-model-aliases
+model = "o1-mini"
 
 
 def repl(
