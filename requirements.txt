@@ -3,9 +3,9 @@ appdirs==1.4.4
 black==24.8.0
 click==8.1.8
 mypy==1.15.0
-openai==1.73.0
-prompt-toolkit==3.0.50
+openai==1.75.0
+prompt-toolkit==3.0.51
 pylint==3.3.6
 rope==1.13.0
-ruff==0.11.5
+ruff==0.11.6
 SQLAlchemy==2.0.40
