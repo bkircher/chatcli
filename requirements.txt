@@ -2,10 +2,10 @@ alembic==1.16.4
 appdirs==1.4.4
 black==24.8.0
 click==8.1.8
-mypy==1.17.0
-openai==1.97.1
+mypy==1.17.1
+openai==1.98.0
 prompt-toolkit==3.0.51
 pylint==3.3.7
 rope==1.14.0
-ruff==0.12.5
-SQLAlchemy==2.0.41
+ruff==0.12.7
+SQLAlchemy==2.0.42
